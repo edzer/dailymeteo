@@ -1,0 +1,571 @@
+%\documentclass[colorlinks=true,urlcolor=blue,a4paper,handout]{beamer}
+%\documentclass{beamer}
+%\documentclass[ignorenonframetext,mathserif]{beamer}
+\documentclass[mathserif]{beamer}
+\usepackage{graphicx}
+\usepackage{alltt}
+
+\usepackage{color}
+\usepackage{latexsym}
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{listings}
+\usepackage{longtable}
+\usepackage{hyperref}
+\usepackage{tabularx}
+\usepackage{array}
+%\usepackage[utf8]{inputenc} 
+\usepackage{verbatim}
+
+%\documentclass[presentation,xcolor=pdftex,dvipsnames,table]{beamer}
+%\documentclass[a4paper,handout,xcolor=pdftex,dvipsnames,table]{beamer}
+%\usetheme{Warsaw}
+%\usetheme{Darmstadt}
+%\usecolortheme{seagull}
+\usefonttheme[onlylarge]{structurebold}
+%\setbeamerfont*{frametitle}{size=\normalsize,series=\bfseries}
+
+\newenvironment{changemargin}[2]{%
+\begin{list}{}{%
+\setlength{\topsep}{0pt}%
+\setlength{\leftmargin}{#1}%
+\setlength{\rightmargin}{#2}%
+\setlength{\listparindent}{\parindent}%
+\setlength{\itemindent}{\parindent}%
+\setlength{\parsep}{\parskip}%
+}%
+\item[]}{\end{list}}
+% Make one image take up the entire slide content area in beamer,.:
+% centered/centred full-screen image, with title:
+% This uses the whole screen except for the 1cm border around it
+% all. 128x96mm
+\newcommand{\titledFrameImage}[2]{
+\begin{frame}{#1}
+%\begin{changemargin}{-1cm}{-1cm}
+\begin{center}
+\includegraphics[width=108mm,height=\textheight,keepaspectratio]{#2}
+\end{center}
+%\end{changemargin}
+\end{frame}
+}
+
+% Make one image take up the entire slide content area in beamer.:
+% centered/centred full-screen image, no title:
+% This uses the whole screen except for the 1cm border around it
+% all. 128x96mm
+\newcommand{\plainFrameImage}[1]{
+\begin{frame}[plain]
+%\begin{changemargin}{-1cm}{-1cm}
+\begin{center}
+\includegraphics[width=108mm,height=76mm,keepaspectratio]{#1}
+\end{center}
+%\end{changemargin}
+\end{frame}
+}
+
+% Make one image take up the entire slide area, including borders, in beamer.:
+% centered/centred full-screen image, no title:
+% This uses the entire whole screen
+\newcommand{\maxFrameImage}[1]{
+\begin{frame}[plain]
+\begin{changemargin}{-1cm}{-1cm}
+\begin{center}
+\includegraphics[width=\paperwidth,height=\paperheight,keepaspectratio]
+{#1}
+\end{center}
+\end{changemargin}
+\end{frame}
+}
+
+\mode<presentation>
+{
+  %\usetheme{Dresden}
+  \setbeamercovered{transparent}
+}
+\setbeamertemplate{footline}[frame number]
+%\setbeamertemplate{navigation symbols}[frame number]
+ 
+\usepackage[utf8]{inputenc}
+%\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{xspace}
+
+%\usepackage[colorlinks=true,urlcolor=blue]{hyperref}
+
+\usepackage{Sweave}
+\setkeys{Gin}{width=0.95\textwidth}
+
+\newcommand{\code}[1]{\texttt{\small #1}}
+\newcommand{\strong}[1]{{\normalfont\fontseries{b}\selectfont #1}}
+\definecolor{dark-green}{rgb}{0,0.45,0}
+\definecolor{dark-red}{rgb}{0.85,0.0,0}
+\definecolor{gg}{rgb}{0.5,0.5.0,0}
+\let\pkg=\strong
+\def\RR{\textsf{R}\xspace}
+\def\SP{\texttt{S-PLUS}\xspace}
+\def\SS{\texttt{S}\xspace}
+\def\SIII{\texttt{S3}\xspace}
+\def\SIV{\texttt{S4}\xspace}
+
+\renewcommand{\a}{\rightarrow}
+
+\newcommand{\email}[1]{\href{mailto:#1}{\normalfont\texttt{#1}}}
+
+%\date{29 June 2010}
+\title{\bf Spatial and temporal support of meteorological observations and predictions}
+
+%\SweaveOpts{echo=TRUE,eval=TRUE,width=7,height=5}
+
+\author{
+%\vspace{.7cm}\\ 
+\includegraphics[width=4cm]{ifgi-logo_int} \\
+\vspace{.7cm}
+Edzer Pebesma}
+\date{ DailyMeteo, Belgrade, 24-27 Jun 2014 }
+
+%\institute[University of M\"unster]
+%{
+%\vspace{.7cm}\\ \includegraphics[width=5cm]{ifgi-logo_int} 
+%}
+
+<<label=afig,echo=FALSE,eval=FALSE>>=
+.PngNo <- .PngNo + 1; file <- paste("Fig-", .PngNo, ".pdf", sep="")
+pdf(file=file, width = 4.5, height = 4.75, pointsize = 8)
+opar <- par(no.readonly = TRUE)
+par(mar=c(4,4,2,1)+0.1)
+@
+
+<<label=zfig,echo=FALSE,eval=FALSE>>=
+par(opar)
+dev.null <- dev.off()
+cat("\\includegraphics[width=0.95\\textwidth]{", file, "}\n\n", sep="")
+@
+
+\begin{document} 
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+<<echo=FALSE>>=
+options("StartupBanner"="off")
+rm(list=ls())
+.owidth <- getOption("width")
+options("width"=70)
+.PngNo <- 0
+@
+
+\frame{\frametitle{Overview}
+\begin{enumerate}
+\item What is support?
+\item Aggregating observations
+\item Aggregating predictions
+\item An example
+\item Prediction errors for aggregations
+\item Block kriging
+\item Linear vs. non-linear aggregation
+\item T-Aggregate-S-interpolate, or S-interpolate-T-aggregate?
+\item Bayesian approaches
+\end{enumerate}
+}
+
+
+\frame{\frametitle{What is support?}
+Support is the physical size (in space, in time), of observations,
+and of predictions.
+
+Why do we need to talk about support? \pause
+\begin{itemize}
+\item we often assume spatial {\em point support}, but we cannot measure on
+things of zero size, because measurement devices have a size.
+\item we often assume instant {\em temporal support}, but measurement takes
+time, and sensors need time to respond to changing conditions
+\end{itemize} \pause
+
+Clear support:
+\begin{itemize}
+\item shutter speed of a camera
+\item filter {\em time} for PM$_{10}$ measuremet
+\end{itemize} \pause
+Not so clear:
+\begin{itemize}
+\item Ground area to which a remote sensing pixel relates (not resolution)
+\item temporal support of a tipping bucket rain gauge (tip)
+\end{itemize} \pause
+}
+\maxFrameImage{tip1}
+\maxFrameImage{tip2}
+\maxFrameImage{pf}
+
+\frame[containsverbatim]{\frametitle{Support of dprec (meteo)}
+\begin{footnotesize}
+<<>>=
+library(spacetime)
+load("st_meteo.RData")
+dprec = m2[NLpol,,"prec"]
+dprec[1,1:2]
+dprec[1:2,1]
+@
+\end{footnotesize}
+{\tt?dprec: ... ‘prec’ numeric; daily precipitation amount in mm}
+
+What is the spatial support?
+}
+
+\titledFrameImage{Aggregating observations: temporal}{eos}
+
+\frame[containsverbatim]{\frametitle{Aggregating observations: temporal}
+For monthly total rainfall, can we reasonably use
+\begin{footnotesize}
+<<>>=
+mprec = aggregate(dprec, "1 month", sum, na.rm = TRUE)
+@
+\end{footnotesize}
+or should we rather use
+\begin{footnotesize}
+<<>>=
+mprec = aggregate(dprec, "1 month", sum, na.rm = FALSE)
+@
+\end{footnotesize}
+and omit the {\tt NA} values, or should we {\em estimate}, by
+\begin{footnotesize}
+<<>>=
+mprec = aggregate(dprec, "1 month", mean, na.rm = TRUE)
+mprec$prec = mprec$prec * 31
+@
+\end{footnotesize}
+Counting {\tt NA} values may help deciding:
+\begin{footnotesize}
+<<>>=
+table(aggregate(dprec, "1 month", function(x) sum(is.na(x)))[[1]])
+@
+\end{footnotesize}
+}
+
+
+\frame[containsverbatim]{\frametitle{Aggregating observations: spatial}
+So, {\tt mprec} has monthly total preciptation for Jul 2011 in the Netherlands. 
+
+Let us aggregate these spatially:
+\begin{footnotesize}
+<<>>=
+aggregate(mprec, NLpol, mean)$prec
+@
+\end{footnotesize}
+This is the mean monthly total precipitation of:
+\begin{itemize}
+\item[a] the set of 337 rain gauges
+\item[b] the country (Nederland)
+\item[c] both
+\end{itemize}
+%If you can sum, then the mean is the mean!
+}
+
+\frame[containsverbatim]{\frametitle{Aggregating observations: spatial - II}
+\begin{footnotesize}
+<<>>=
+aggregate(mprec, NLpol, sum)$prec
+@
+\end{footnotesize}
+This is the summed monthly total precipitation for:
+\begin{itemize}
+\item[a] the set of 337 rain gauges
+\item[b] the country (Nederland)
+\item[c] both
+\end{itemize}
+}
+
+\frame[containsverbatim]{\frametitle{Aggregating observations: spatial - III}
+\begin{footnotesize}
+<<>>=
+aggregate(mprec, NLpol, mean)$prec
+@
+\end{footnotesize}
+This {\color{red} estimates} the mean monthly total precipitation of:
+\begin{itemize}
+\item[a] the set of 337 rain gauges
+\item[b] the country (Nederland)
+\item[c] both
+\end{itemize}
+%If you can sum, then the mean is the mean!
+}
+
+\maxFrameImage{eea1.png}
+\titledFrameImage{Particulate matter time series, averaged over station type}{eea2.png}
+
+\frame[containsverbatim]{\frametitle{Spatial distribution of stations over NL}
+\begin{columns}
+\begin{column}{6cm}
+\begin{footnotesize}
+<<>>=
+plot(NLpol)
+points(mprec, col = 'red')
+@
+\end{footnotesize}
+\end{column}
+\begin{column}{6cm}
+\begin{footnotesize}
+<<fig=TRUE, echo=FALSE>>=
+plot(NLpol)
+points(mprec, col = 'red')
+@
+\end{footnotesize}
+\end{column}
+\end{columns}
+}
+
+\frame[containsverbatim]{\frametitle{If we want to integrate over NL...}
+\begin{columns}
+\begin{column}{5cm}
+\begin{footnotesize}
+<<>>=
+library(sp)
+library(rgdal)
+NLpol = spTransform(NLpol, 
+	CRS("+init=epsg:28992"))
+plot(NLpol)
+pts = spsample(NLpol, 500, 
+	"regular", offset = c(.5,.5))
+points(pts, col = 'red', 
+	pch=3, cex=.3)
+@
+\end{footnotesize}
+\end{column}
+\begin{column}{7cm}
+\begin{footnotesize}
+<<fig=TRUE, echo=FALSE>>=
+plot(NLpol)
+points(pts, col = 'red', pch=3, cex=.3)
+@
+\end{footnotesize}
+\end{column}
+\end{columns}
+}
+
+
+\frame[containsverbatim]{\frametitle{Aggregating predictions}
+<<echo=FALSE>>=
+row.names(mprec@coords) = NULL
+@
+\begin{columns}
+\begin{column}{6cm}
+\begin{footnotesize}
+<<>>=
+mprec = spTransform(mprec,
+	CRS("+init=epsg:28992"))
+library(gstat)
+v = variogram(prec~1, mprec, 
+	cutoff=1e5)
+v.fit = fit.variogram(v, 
+	vgm(1, "Lin", 0, 1))
+v.fit
+plot(v, v.fit)
+@
+\end{footnotesize}
+\end{column}
+\begin{column}{6cm}
+\begin{footnotesize}
+<<fig=TRUE, echo=FALSE>>=
+print(plot(v, v.fit))
+@
+\end{footnotesize}
+\end{column}
+\end{columns}
+}
+
+\frame[containsverbatim]{\frametitle{Aggregating predictions}
+<<echo=FALSE>>=
+row.names(mprec@coords) = NULL
+@
+\begin{columns}
+\begin{column}{6cm}
+\begin{footnotesize}
+<<>>=
+kr = krige(prec~1, mprec, pts, v.fit)
+spplot(kr[1],
+	col.regions = bpy.colors())
+@
+\end{footnotesize}
+\end{column}
+\begin{column}{6cm}
+\begin{footnotesize}
+<<fig=TRUE, echo=FALSE>>=
+print(spplot(kr[1], sp.layout = list("sp.polygons", NLpol),
+	col.regions = bpy.colors()))
+@
+\end{footnotesize}
+\end{column}
+\end{columns}
+}
+
+\frame[containsverbatim]{\frametitle{Aggregating predictions - II}
+\begin{footnotesize}
+<<>>=
+kr = krige(prec~1, mprec, pts, v.fit)
+mean(kr$var1.pred)
+@
+\end{footnotesize}
+What is the standard error of this mean? {\color{red}Not} one of those:
+\begin{footnotesize}
+<<>>=
+sqrt(var(kr$var1.pred))
+sqrt(var(kr$var1.pred)/length(pts))
+mean(sqrt(kr$var1.var))
+@
+\end{footnotesize}
+}
+
+\frame[containsverbatim]{\frametitle{Prediction errors for aggregations}
+Block kriging directly estimates 
+$$Z(B) = \frac{1}{|B|}\int_B Z(s)ds \approx \sum_{i=1,s_i \in B}^n Z(s_i)$$
+\begin{footnotesize}
+<<>>=
+mean(kr$var1.pred)
+krige(prec~1, mprec, NLpol, v.fit)$var1.pred
+@
+\end{footnotesize}
+}
+
+\frame{\frametitle{Block kriging}
+\begin{enumerate}
+\item Block kriging estimates $Z(B)$, and provides an error measure for
+$Z(B)-\hat{Z}(B)$, the block kriging standard error.
+
+\item The kriging estimate $\hat{Z}(B)$ is equal to $\sum_{i=1}^n \hat{Z}(s_i)$
+where the $s_i$ discretize $B$.
+
+\item The kriging variance (squared standard error) is
+$$E( \sum_{i=1}^n \hat{Z}(s_i) - \sum_{i=1}^n {Z}(s_i))^2$$
+and takes all {\color{red} covariances} into account.
+
+\item Only the point kriging predictions $\hat{Z}(s_i)$ cannot provide this.
+\end{enumerate}
+}
+
+\frame[containsverbatim]{\frametitle{Block kriging: example}
+<<echo=FALSE>>=
+row.names(mprec@coords) = NULL
+@
+\begin{columns}
+\begin{column}{6cm}
+\begin{footnotesize}
+<<>>=
+p = krige(prec~1, mprec, pts, v.fit)
+b = krige(prec~1, mprec, pts, v.fit,
+	block = c(1000,1000))
+range(p$var1.pred - b$var1.pred)
+qqplot(p$var1.pred, b$var1.pred,
+ xlab = 'points', ylab = 'block')
+mean(p$var1.var - b$var1.var)
+qqplot(p$var1.var, b$var1.var,
+ xlab = 'points', ylab = 'block')
+@
+\end{footnotesize}
+\end{column}
+\begin{column}{6cm}
+\begin{footnotesize}
+<<fig=TRUE, echo=FALSE>>=
+opar = par()
+par(mfrow=c(2,1))
+qqplot(p$var1.pred, b$var1.pred,
+ xlab = 'points', ylab = 'block')
+title("kriging predictions: block vs point")
+abline(0,1,col='red')
+qqplot(p$var1.var, b$var1.var,
+ xlab = 'points', ylab = 'block')
+title("kriging variances: block vs point")
+par(opar)
+@
+\end{footnotesize}
+\end{column}
+\end{columns}
+}
+
+\frame{\frametitle{Linear vs. non-linear aggregation}
+If, instead of the block mean, we are interested in some
+other quantity
+$$Z(B) = \frac{1}{|B|}\int_B g(Z(s))ds $$
+such as the block median or a quantile, how do we get it?
+\begin{enumerate}
+\item not by block kriging
+\item we can use {\em conditional simulation}:
+ \begin{itemize}
+ \item draw samples from $(Z|\mbox{observations})$
+ \item compute $g(Z)$
+ \item integrate, spatially
+ \end{itemize}
+\item this is a (simple) Monte Carlo procedure, not very expensive
+\end{enumerate}
+}
+
+\frame{\frametitle{Why would you want block kriging?}
+... why would you want point kriging? (think: tipping bucket!)
+\begin{itemize}
+\item when $Z(s) = S(s) + \epsilon(s)$ with $\epsilon(s)$ a white noise
+process (nugget), block kriging for very small blocks is VERY similar
+to predicting $S(s)$ instead of $Z(s)$
+\item ... but block kriging works for any block size, any geometry
+\item aggregated values, in particular means for larger blocks have
+lower prediction errors than for smaller blocks
+\item if $\epsilon(s)$ is, or contains, measurement noise, why predict this?
+\end{itemize}
+}
+
+\frame[containsverbatim]{\frametitle{Block kriging SE as function of block size}
+For these data, and this variogram model:
+\begin{columns}
+\begin{column}{6cm}
+\begin{footnotesize}
+<<>>=
+p = SpatialPoints(coordinates(NLpol),
+	CRS(proj4string(NLpol)))
+sizes = (1:100)*1000
+f = function(x) {
+	krige(prec~1, mprec, 
+	p, v.fit, block = 
+	rep(x,2), 
+	debug.level=0)$var1.var
+}
+v = sapply(sizes, f)
+plot(sizes, sqrt(v), 
+	xlab = 'block size',
+	ylab = 'block kriging SE')
+@
+\end{footnotesize}
+\end{column}
+\begin{column}{6cm}
+\begin{footnotesize}
+<<fig=TRUE, echo=FALSE>>=
+plot(sizes, sqrt(v), 
+	xlab = 'block size',
+	ylab = 'block kriging SE',
+	type = 'l', lwd = 2, col = 'red')
+@
+\end{footnotesize}
+\end{column}
+\end{columns}
+}
+
+\titledFrameImage{T-Aggregate S-interpolate, or S-interpolate T-aggregate?}{gd}
+
+\frame{\frametitle{Bayesian approaches}
+\begin{itemize}
+\item Bayesian approaches take uncertainties in variogram parameters
+into account;
+\item the Bayesian framework is comprehensible and consistent, usually
+prefered
+\item it may however require supercomputer resources
+\item in data-rich situations, uncertainty in variogram parameters may
+not be a meaningful source of uncertainty
+\item package INLA (\url{http://www.r-inla.org/} provides nested Laplace
+approximations to full posteriors, dropping the need for MCMC
+\end{itemize}
+}
+
+\frame{\frametitle{Conclusion}
+The spatial mean of a set of point values in an area is not equal
+to the mean of the variable over that area!
+}
+
+\end{document}

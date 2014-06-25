@@ -1,0 +1,55 @@
+%"Statistical modelling of space-time variability"
+%dr. Gerard B.M. Heuvelink, Wageningen University (45 mins)
+
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\title{\bf Spatial and temporal support of meteorological observations and predictions}
+\author{Edzer Pebesma \\ Institute for Geoinformatics \\ University of Münster }
+\begin{document}
+\maketitle
+
+{\em Support} refers to the physical size of the area, volume,
+and/or temporal duration of a measured or predicted data value.
+Support of measurements is often related to the physical constraints:
+we cannot directly observe the temperature of a square kilometer,
+not even of an area of 100 m$^2$; rainfall measurements also usually
+refer to devices with a catchment area of les than 1 m$^2$.
+
+By choosing measurement sites carefully, we hope, by the idea of
+{\em representativity}, that measured values carry more information
+about their surroundings than when they were {\em not} chosen with
+the same care. Representativity could reflect the notion that we
+would like to be able to measure average values over larger areas,
+as local extreme conditions are typically avoided.
+
+Nevertheless, measured value and local or regional averages
+will differ. Geostatistical theory allows for predicting linearly
+aggregated (mean) values by regularizing (averaging) semivariances,
+and by predicting non-linearly aggregated values by simulation. The
+type of aggregation (function), the aggregation predicate (target
+support), and the variability of the predictant all play a role here.
+
+{\em Aggregation} is the process of deriving a single number from a
+collection of numbers. The aggregation function may be simple such
+as in the case of {\em mean} or {\em max}, it may also be complex,
+e.g. computing catchment discharge from spatially distributed
+precipitation values. The aggregation predicate is the
+spatial area and/or temporal period over which aggregation takes
+place. Aggregation may be useful to (i) match data that is collected
+at a coarser support (ii) increase accuracy of predictions, and
+(iii) smooth out local, or short-term variability.
+
+When we want to aggregate over a continuous area but do not have
+exhaustive (continuous) measurement data available for this area,
+a {\em model} for the observation data is required to fill the area
+with missing data in with predictions. Typical models are stationary
+covariance models, as used in geostatistics. When, in these models,
+we assume the mean function to depend on external variables with a
+different support (e.g. derived from satellite imagery, or elevation
+data), we introduce a bias that depends on the difference of the
+external variable at the support we have it and that, at the support
+that would match that of the primary observation data. We will
+discuss where this bias comes from, and how it may be dealt with.
+
+
+\end{document}
