@@ -258,6 +258,7 @@ This is the mean monthly total precipitation of:
 \item[a] the set of 337 rain gauges
 \item[b] the country (Nederland)
 \item[c] both
+\item[d] none of the above
 \end{itemize}
 %If you can sum, then the mean is the mean!
 }
@@ -273,6 +274,7 @@ This is the summed monthly total precipitation for:
 \item[a] the set of 337 rain gauges
 \item[b] the country (Nederland)
 \item[c] both
+\item[d] none of the above
 \end{itemize}
 }
 
@@ -287,6 +289,7 @@ This {\color{red} estimates} the mean monthly total precipitation of:
 \item[a] the set of 337 rain gauges
 \item[b] the country (Nederland)
 \item[c] both
+\item[d] none of the above
 \end{itemize}
 %If you can sum, then the mean is the mean!
 }
